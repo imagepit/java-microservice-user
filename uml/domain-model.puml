@@ -1,0 +1,46 @@
+@startuml
+hide empty methods
+hide empty fields
+left to right direction
+skinparam shadowing false
+
+package domain.model{
+    package user{
+        class User<<Entity>>
+        class UserId<<ValueObject>>
+        class Name<<ValueObject>>
+        class Password<<ValueObject>>
+        interface UserRepository
+        User o--> UserId: has-a
+        User o--> Name: has-a
+        User o--> Password: has-a
+    }
+}
+
+package infrastructure{
+    package persistence{
+        package dummy{
+            class UserRepositoryDummy implements UserRepository
+        }
+        package jpa{
+            class UserRepositoryJpa implements UserRepository
+        }
+    }
+}
+
+package application{
+    package "user" as au {
+        interface UserService
+        class UserServiceImpl implements UserService
+    }
+}
+package presentation{
+    package "user" as pu{
+        class UserController
+    }
+}
+UserController --> UserService
+'UserController -> User
+UserServiceImpl -> UserRepository
+'UserServiceImpl -> User
+@enduml

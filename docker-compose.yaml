@@ -1,0 +1,24 @@
+# docker-composeとは
+# 複数のコンテナを定義し実行する Docker アプリケーションのためのツールです。
+# Compose においては YAML ファイルを使ってアプリケーションサービスの設定を行います。
+# コマンドを１つ実行するだけで、設定内容に基づいたアプリケーションサービスの生成、起動を行います。
+version: '2'
+services: # この配下にコンテナの定義を記述
+  app: # appという名前のコンテナを使う
+    container_name: "user-app" # コンテナのエイリアス
+    image: openjdk:11 # コンテナのイメージ（雛形）の指定（Docker Hubから取得）
+    ports: # ホストOSとコンテナの接続点をポートフォワーディングで定義
+      - "3001:8080" # ホストOSからlocalhost:3001でリクエストしてらコンテナの8080へフォワード
+    volumes: # ホストOSとコンテナのボリューム（ファイル共有）の設定
+      - .:/app # ホストOSのカレントディレクトリとコンテナの/appを共有
+      # - /Users/xxxx/.gradle:/root/.gradle # gradleのキャッシュ設定（Windowsの場合）
+      # - ~/.gradle:/root/.gradle # gradleのキャッシュ設定（Macの場合）
+    # environment:
+    #     GRADLE_USER_HOME: /root/.gradle # gradleのキャッシュ設定用の環境変数
+    working_dir: /app # コンテナ起動時のカレントディクトリの指定
+    command: ./gradlew bootRun # コンテナ起動時の初期コマンド（Spring Bootの起動コマンド）
+    networks: # Dockerのネットワークの指定
+      - local
+networks:
+  local:
+    external: true
